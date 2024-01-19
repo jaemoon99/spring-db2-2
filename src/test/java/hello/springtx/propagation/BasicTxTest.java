@@ -74,4 +74,20 @@ public class BasicTxTest {
         log.info("트랜잭션2 롤백");
         txManager.rollback(tx2);
     }
+
+    @Test
+    void inner_commit() {
+        log.info("외부 트랜잭션 시작");
+        TransactionStatus outer = txManager.getTransaction(new DefaultTransactionDefinition());
+        log.info("outer.isNewTransaction()={}", outer.isNewTransaction());
+
+        log.info("내부 트랜잭션 시작");
+        TransactionStatus inner = txManager.getTransaction(new DefaultTransactionDefinition());
+        log.info("inner.isNewTransaction()={}", inner.isNewTransaction());
+        log.info("내부 트랜잭션 커밋");
+        txManager.commit(inner); //커밋을 하면 트랜잭션이 종료되기 때문에 아무 일도 일어나지 않음, 마무리 커밋은 외부에서 진행
+
+        log.info("외부 트랜잭션 커밋");
+        txManager.commit(outer);
+    }
 }
